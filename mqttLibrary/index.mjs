@@ -4,8 +4,12 @@ class MQTTLibrary {
   constructor(brokerUrl) {
     this.brokerUrl = brokerUrl;
     this.client = null;
-    this.clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
+    this.clientId = `client_mqtt_${Math.random().toString(10).slice(2,4)}`;
     this.subscribedTopics = [];
+  }
+
+  clientID(){
+    return this.clientId;
   }
 
   // Function to connect to the broker with unique ID
