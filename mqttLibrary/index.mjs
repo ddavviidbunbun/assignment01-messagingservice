@@ -4,7 +4,7 @@ class MQTTLibrary {
   constructor(brokerUrl) {
     this.brokerUrl = brokerUrl;
     this.client = null;
-    this.clientId = `client_mqtt_${Math.random().toString(10).slice(2,4)}`;
+    this.clientId = `client_mqtt_${Math.random().toString(10).slice(2,4)}`; // Sesuaikan dengan kebutuhan
     this.subscribedTopics = [];
   }
 
