@@ -4,12 +4,8 @@ class MQTTLibrary {
   constructor(brokerUrl) {
     this.brokerUrl = brokerUrl;
     this.client = null;
-    this.clientId = `client_mqtt_${Math.random().toString(10).slice(2,4)}`; // Sesuaikan dengan kebutuhan
+    this.clientId = `mqtt_${Math.random().toString(10).slice(2,4)}`; // Sesuaikan dengan kebutuhan
     this.subscribedTopics = [];
-  }
-
-  clientID(){
-    return this.clientId;
   }
 
   // Function to connect to the broker with unique ID
@@ -29,7 +25,14 @@ class MQTTLibrary {
       });
 
       this.client.on('message', (topic, message) => {
-        console.log(`Received message on topic "${topic}": ${message.toString()}`);
+        let [sender, msgANDreceiver] = message.toString().split('/');
+        let [msg, destClient] = msgANDreceiver.toString().split('>');
+        // console.log("\n\n" + typeof destClient + ", " +destClient);
+        if(destClient === undefined){
+          console.log(`Received message on topic "${topic}" from ${sender}: ${msg}`);
+        }else if(destClient === this.clientId){
+          console.log(`Received message on topic "${topic}" from ${sender}: ${msg}`);
+        }
       });
     });
   }
@@ -53,16 +56,17 @@ class MQTTLibrary {
   }
 
   // Function to send message to a single topic (unicast)
-  sendUnicast(topic, message, qos = 0) {
+  sendUnicast(topic, message,qos = 0) {
     if (!this.client) {
       throw new Error('Client not connected');
     }
 
-    this.client.publish(topic, message, { qos }, (err) => {
+    this.client.publish(topic, message,{ qos }, (err) => {
       if (err) {
         console.error(`Failed to publish message to topic "${topic}":`, err);
       } else {
-        console.log(`Message sent to "${topic}": ${message}`);
+        let [sender,msg] = message.toString().split('/');
+        console.log(`Message sent to "${topic}": ${msg}`);
       }
     });
   }
@@ -91,7 +95,13 @@ class MQTTLibrary {
     }
 
     this.client.on('message', (topic, message) => {
-      callback(topic, message.toString());
+      let [sender, msgANDreceiver] = message.toString().split('/');
+      let [msg, destClient] = msgANDreceiver.toString().split('>');
+      if(destClient === "" || destClient === null)
+        callback(topic, msg, sender);
+      else if(destClient === this.clientId){
+        callback(topic, msg, sender);
+      }
     });
   }
 
