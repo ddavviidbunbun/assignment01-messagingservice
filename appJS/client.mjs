@@ -28,7 +28,6 @@ client
         console.log("Exiting...");
         client.disconnect();
         rl.close();
-        process.exit();
       } else {
         // Mengirim pesan ke topik 'home/room1'
         console.log(`Sending message: ${message}`);
