@@ -1,10 +1,10 @@
-import mqtt from 'mqtt';
+import mqtt from "mqtt";
 
 class MQTTLibrary {
   constructor(brokerUrl) {
     this.brokerUrl = brokerUrl;
     this.client = null;
-    this.clientId = `mqtt_${Math.random().toString(10).slice(2,4)}`; // Sesuaikan dengan kebutuhan
+    this.clientId = `${Math.random().toString(10).slice(2, 5)}`; // Sesuaikan dengan kebutuhan
     this.subscribedTopics = [];
   }
 
@@ -13,26 +13,15 @@ class MQTTLibrary {
     return new Promise((resolve, reject) => {
       this.client = mqtt.connect(this.brokerUrl, { clientId });
 
-      this.client.on('connect', () => {
+      this.client.on("connect", () => {
         console.log(`Connected as ${clientId}`);
         resolve();
       });
 
-      this.client.on('error', (err) => {
+      this.client.on("error", (err) => {
         console.error("Connection error: ", err);
         this.client.end();
         reject(err);
-      });
-
-      this.client.on('message', (topic, message) => {
-        let [sender, msgANDreceiver] = message.toString().split('/');
-        let [msg, destClient] = msgANDreceiver.toString().split('>');
-        // console.log("\n\n" + typeof destClient + ", " +destClient);
-        if(destClient === undefined){
-          console.log(`Received message on topic "${topic}" from ${sender}: ${msg}`);
-        }else if(destClient === this.clientId){
-          console.log(`Received message on topic "${topic}" from ${sender}: ${msg}`);
-        }
       });
     });
   }
@@ -40,7 +29,7 @@ class MQTTLibrary {
   // Function to subscribe to topics (unicast or multicast)
   subscribe(topics, qos = 0) {
     if (!this.client) {
-      throw new Error('Client not connected');
+      throw new Error("Client not connected");
     }
 
     topics.forEach((topic) => {
@@ -56,16 +45,16 @@ class MQTTLibrary {
   }
 
   // Function to send message to a single topic (unicast)
-  sendUnicast(topic, message,qos = 0) {
+  sendUnicast(topic, message, qos = 0) {
     if (!this.client) {
-      throw new Error('Client not connected');
+      throw new Error("Client not connected");
     }
 
-    this.client.publish(topic, message,{ qos }, (err) => {
+    this.client.publish(topic, message, { qos }, (err) => {
       if (err) {
         console.error(`Failed to publish message to topic "${topic}":`, err);
       } else {
-        let [sender,msg] = message.toString().split('/');
+        let [sender, msg] = message.toString().split("/");
         console.log(`Message sent to "${topic}": ${msg}`);
       }
     });
@@ -74,7 +63,7 @@ class MQTTLibrary {
   // Function to send message to multiple topics (multicast)
   sendMulticast(topics, message, qos = 0) {
     if (!this.client) {
-      throw new Error('Client not connected');
+      throw new Error("Client not connected");
     }
 
     topics.forEach((topic) => {
@@ -91,15 +80,15 @@ class MQTTLibrary {
   // Two-way communication handler
   onMessage(callback) {
     if (!this.client) {
-      throw new Error('Client not connected');
+      throw new Error("Client not connected");
     }
 
-    this.client.on('message', (topic, message) => {
-      let [sender, msgANDreceiver] = message.toString().split('/');
-      let [msg, destClient] = msgANDreceiver.toString().split('>');
-      if(destClient === "" || destClient === null)
+    this.client.on("message", (topic, message) => {
+      let [sender, msgANDreceiver] = message.toString().split("/");
+      let [msg, destClient] = msgANDreceiver.toString().split(">");
+      if (destClient === undefined && sender !== this.clientId) {
         callback(topic, msg, sender);
-      else if(destClient === this.clientId){
+      } else if (destClient === this.clientId && sender !== this.clientId) {
         callback(topic, msg, sender);
       }
     });
@@ -108,11 +97,11 @@ class MQTTLibrary {
   // Disconnect client
   disconnect() {
     if (!this.client) {
-      throw new Error('Client not connected');
+      throw new Error("Client not connected");
     }
 
     this.client.end(() => {
-      console.log('Disconnected from broker');
+      console.log("Disconnected from broker");
     });
   }
 }
