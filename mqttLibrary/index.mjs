@@ -6,23 +6,20 @@ class MQTTLibrary {
     this.client = null;
     this.clientId = `${Math.random().toString(10).slice(2, 5)}`; // Sesuaikan dengan kebutuhan
     this.subscribedTopics = [];
+    this.manyClients = [];
   }
 
   // Function to connect to the broker with unique ID
   connect(clientId = this.clientId) {
-    return new Promise((resolve, reject) => {
-      this.client = mqtt.connect(this.brokerUrl, { clientId });
+    this.client = mqtt.connect(this.brokerUrl, { clientId });
 
-      this.client.on("connect", () => {
-        console.log(`Connected as ${clientId}`);
-        resolve();
-      });
+    this.client.on("connect", () => {
+      console.log(`Connected as ${clientId}`);
+    });
 
-      this.client.on("error", (err) => {
-        console.error("Connection error: ", err);
-        this.client.end();
-        reject(err);
-      });
+    this.client.on("error", (err) => {
+      console.error("Connection error: ", err);
+      this.client.end();
     });
   }
 
