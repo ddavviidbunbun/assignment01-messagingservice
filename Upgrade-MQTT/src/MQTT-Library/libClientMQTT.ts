@@ -47,7 +47,7 @@ export default class ClientMQTT {
         this.manyClients[i].status = "DEAD";
       }
     }
-    console.log("halo");
+    //console.log("halo");
   }
   set setClientACK(x: "ACK" | undefined) {
     for (let i: number = 0; i < this.manyClients.length; i++) {
