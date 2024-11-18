@@ -22,6 +22,7 @@ const callBack = () => {
             status: "DEAD",
         };
         client.sendPinkACK(obj as ClientsProperties);
+        client.setClientACK = "ACK";
     }
 };
 

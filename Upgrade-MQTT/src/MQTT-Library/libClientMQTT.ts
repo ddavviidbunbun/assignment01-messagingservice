@@ -49,6 +49,11 @@ export default class ClientMQTT {
     }
     console.log("halo");
   }
+  set setClientACK(x: "ACK" | undefined) {
+    for (let i: number = 0; i < this.manyClients.length; i++) {
+      this.manyClients[i].ping = x;
+    }
+  }
 
   //Contructor: Initialized
   constructor(brokerURL: string) {
@@ -205,7 +210,6 @@ export default class ClientMQTT {
           for (let i: number = 0; i < this.manyClients.length; i++) {
             if (obj.neighbor === this.manyClients[i].neighbor) {
               this.manyClients[i] = obj;
-              this.manyClients[i].ping = undefined;
               continue;
             }
             if (this.manyClients.length - 1 === i) {
