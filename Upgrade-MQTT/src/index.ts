@@ -2,6 +2,9 @@ import ClientMQTT, { ClientsProperties } from "./MQTT-Library/libClientMQTT";
 import readline from "readline";
 import { timer, timerCheckingStatus } from "./MQTT-Service/libServiceMQTT";
 
+console.log("hi");
+console.log("lol");
+
 const brokerUrl: string = "mqtt://localhost:1883";
 export const client: ClientMQTT = new ClientMQTT(brokerUrl);
 export const rl = readline.createInterface({
