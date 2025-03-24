@@ -4,6 +4,7 @@ import { timer, timerCheckingStatus } from "./MQTT-Service/libServiceMQTT";
 
 console.log("hi");
 console.log("lol");
+console.log("bele");
 
 const brokerUrl: string = "mqtt://localhost:1883";
 export const client: ClientMQTT = new ClientMQTT(brokerUrl);
